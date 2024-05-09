@@ -28,7 +28,12 @@ const EditFilmModal = ({ film, onClose }) => {
             },
             body: JSON.stringify(updatedFilm),
         })
-        .then((response) => response.json())
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error("Failed to update film");
+            }
+            return {message: "Film updated successfully"};
+        })
         .then((data) => {
             // Handle the response from the API
             console.log("Film updated successfully:", data);
@@ -81,15 +86,17 @@ const EditFilmModal = ({ film, onClose }) => {
                             onChange={(e) => setEditedYear(e.target.value)}
                         />
 
-                        <label htmlFor="review">Review</label>
-                        <input
+                        <label htmlFor="review">Review</label><br />
+                        <textarea
                             required={true}
-                            type="text"
+                            className="p-2 border border-gray-300 rounded-md" 
                             name=""
                             id=""
+                            rows="10"
+                            cols={100}
                             value={editedReview}
                             onChange={(e) => setEditedReview(e.target.value)}
-                        />
+                        ></textarea>
 
                         <p>{successMessage && successMessage}</p>
                         <p>{errorMessage && errorMessage}</p>

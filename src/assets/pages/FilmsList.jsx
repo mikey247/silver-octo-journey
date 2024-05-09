@@ -1,8 +1,8 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import xml2js from 'xml-js'; // Import xml-js for parsing XML
 
 import EditFilmModal from './components/EditFilmModal';
+import utils from './utils';
 
 function FilmsList() {
         const [films, setFilms] = useState([]);
@@ -28,25 +28,24 @@ function FilmsList() {
                             'Accept': format
                         }
                     });
-                    console.log(response.data);
                     if (format === 'application/xml') {
-                        // Convert XML to JSON
-                        let result = xml2js.xml2json(response.data, {compact: true, spaces: 4});
-                        let parsedResult = JSON.parse(result);
-                        console.log(parsedResult.films.film);
-                        setFilms(parsedResult.films.film);
-                    } else {
-                        console.log("Set film to JSON");
-                        console.log(response.data)
-                        setFilms(response.data);
+                        // For XML format
+                        const data = utils.fromXml(response.data);
+                        setFilms(data);
+                    } else if(format === 'application/json') {
                         // For JSON format
+                        setFilms(response.data);
+                    } else {
+                        // For text/plain format
+                        const data = utils.fromText(response.data);
+                        setFilms(data);
                     }
                 } catch (error) {
                     console.error(error);
                 }
             };
             fetchData();
-        }, [format]);
+        }, [format, editFilmModal]);
 
         const deleteFilm = (id) => {
             console.log(id);
@@ -108,11 +107,11 @@ function FilmsList() {
                             <th className="px-4 py-2 border border-cyan-50">Year</th>
                             <th className="px-4 py-2 border border-cyan-50">Stars</th>
                             <th className="px-4 py-2 border border-cyan-50">Review</th>
-                            {/* <th className="px-4 py-2 border border-cyan-50">Actions</th> */}
+                            <th className="px-4 py-2 border border-cyan-50">Actions</th>
                         </tr>
                     </thead>
 
-                    {format==="application/json" && films!=null && Array.isArray(films) && <tbody>
+                    {(format==="application/json" || format==="application/xml"|| format==="text/plain") && films!=null && Array.isArray(films) && <tbody>
                         {films.map(film => (
                             <tr key={film.id} className='p-6 gap-4 border-b text-sm text-left'>
                                 <td className='p-2'>{film.id}</td>
@@ -128,21 +127,6 @@ function FilmsList() {
                         
                     </tbody>}
                     
-                    {format==="application/xml" && films!=null && Array.isArray(films) && <tbody>
-                        {films.map(film => (
-                            <tr key={film.id._text} className='p-6 gap-4 border-b text-sm text-left'>
-                                <td className='p-2'>{film.id}</td>
-                                <td className='p-2'>{film.title}</td>
-                                <td className='p-2'>{film.director}</td>
-                                <td className='p-2'>{film.year}</td>
-                                <td className='p-2'>{film.stars}</td>
-                                <td className='p-2'>{film.review}</td>
-                                <td> <button onClick={()=>{ setEditingFilm(film); setEditFilmModal(true);  }}>Edit</button>  </td>
-                                <td> <button onClick={()=>{deleteFilm(film.id)}}>Delete</button> </td>
-                            </tr>
-                        ))}
-                        
-                    </tbody>}
                 </table>
 
 
