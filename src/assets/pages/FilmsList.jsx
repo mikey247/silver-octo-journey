@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 
 import EditFilmModal from './components/EditFilmModal';
 import utils from './utils';
+import AddFilmModal from './components/AddFIlmModal';
 
 function FilmsList() {
         const [films, setFilms] = useState([]);
@@ -10,6 +11,8 @@ function FilmsList() {
 
         const [editFilmModal, setEditFilmModal] = useState(false);
         const [editingFilm, setEditingFilm] = useState(null);
+
+        const [addFilmModal, setAddFilmModal] = useState(false);
         
         // Function to create XML body
         const createXmlBody = (id) => {
@@ -45,7 +48,7 @@ function FilmsList() {
                 }
             };
             fetchData();
-        }, [format, editFilmModal]);
+        }, [format, editFilmModal, addFilmModal]);
 
         const deleteFilm = (id) => {
             console.log(id);
@@ -85,6 +88,8 @@ function FilmsList() {
         return (
             <div>
                 <h1 className="text-center p-3">Films</h1>
+
+                <button onClick={()=>{setAddFilmModal(true)}}>Add New Film</button>
 
                 <div className="flex justify-center items-center gap-4 p-3">
                     <h2 className=" p-3">Format:</h2>
@@ -130,7 +135,8 @@ function FilmsList() {
                 </table>
 
 
-                {editFilmModal && <EditFilmModal film={editingFilm} onClose={() => setEditFilmModal(false)} />}
+                {editFilmModal && <EditFilmModal film={editingFilm} onClose={() => setEditFilmModal(false)} format={format} />}
+                {addFilmModal && <AddFilmModal onClose={() => setAddFilmModal(false)} format={format} />}
             </div>
 
             

@@ -43,7 +43,7 @@ const fromText = (data) => {
     }
 
     //   // Split the entry into properties
-      const [id, title, director, year, stars, review] = filmEntry.split("**");
+      const [id, title, director, year, stars, review] = filmEntry.split(";;;");
 
     //   // Create a movie object
       const film = {
@@ -62,7 +62,42 @@ const fromText = (data) => {
     return filmsArray;
 };
 
+const filmToText = (film) => {
+  return `${film.title};;;${film.director};;;${film.year};;;${film.stars};;;${film.review};;;`;
+};
+
+const filmToTextWithID = (film) => {
+  return `${film.id};;;${film.title};;;${film.director};;;${film.year};;;${film.stars};;;${film.review};;;`;
+};
+
+const filmToXML = (film) => {
+  return `<?xml version="1.0" encoding="UTF-8"?>
+      <film>
+      <title>${film.title}</title>
+      <director>${film.director}</director>
+      <year>${film.year}</year>
+      <stars>${film.stars}</stars>
+      <review>${film.review}</review>
+      </film>`;
+};
+
+const filmToXMLWithID = (film) => { 
+  return `<?xml version="1.0" encoding="UTF-8"?>
+      <film>
+      <id>${film.id}</id>
+      <title>${film.title}</title>
+      <director>${film.director}</director>
+      <year>${film.year}</year>
+      <stars>${film.stars}</stars>
+      <review>${film.review}</review>
+      </film>`;
+};
+
 export default {
     fromXml,
     fromText,
+    filmToText,
+    filmToTextWithID,
+    filmToXML,
+    filmToXMLWithID,
 }
